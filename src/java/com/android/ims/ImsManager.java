@@ -340,19 +340,10 @@ public class ImsManager {
         private void notifyReady() throws ImsException {
             ImsManager manager;
             synchronized (mLock) {
+                mRetryCount = 0;
                 manager = mImsManager;
             }
-            try {
-                mListener.connectionReady(manager);
-            }
-            catch (ImsException e) {
-                Log.w(TAG, "Connector: notifyReady exception: " + e.getMessage());
-                throw e;
-            }
-            // Only reset retry count if connectionReady does not generate an ImsException/
-            synchronized (mLock) {
-                mRetryCount = 0;
-            }
+            mListener.connectionReady(manager);
         }
 
         private void notifyNotReady() {
@@ -1414,8 +1405,8 @@ public class ImsManager {
     }
 
     /*
-     * Returns a flag indicating whether the IMS service is available. If it is not available or
-     * busy, it will try to connect before reporting failure.
+     * Returns a flag indicating whether the IMS service is available. If it is not available,
+     * it will try to connect before reporting failure.
      */
     public boolean isServiceAvailable() {
         connectIfServiceIsAvailable();
